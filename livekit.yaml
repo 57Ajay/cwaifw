@@ -7,7 +7,7 @@ rtc:
     use_external_ip: true
 
 keys:
-    devkey: 121123dwqdwfwee231dwefw&
+    devkey: somecleanstringwithoutspecialchars
 
 logging:
     json: false

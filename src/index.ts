@@ -1,5 +1,4 @@
 import { type JobContext, type JobProcess, defineAgent, llm, voice } from "@livekit/agents";
-import * as silero from "@livekit/agents-plugin-silero";
 import * as google from "@livekit/agents-plugin-google";
 import { z } from "zod";
 import { VerifyAadharAgent } from "./agents/verifyAadharAgent";
@@ -30,34 +29,56 @@ class TriageAgent extends voice.Agent {
 }
 
 export default defineAgent({
-    prewarm: async (proc: JobProcess) => {
-        proc.userData.vad = await silero.VAD.load();
-    },
     entry: async (ctx: JobContext) => {
-        await ctx.connect();
-        await ctx.waitForParticipant();
+        try {
+            console.log("Job received, connecting...");
+            await ctx.connect();
+            console.log("Connected, waiting for participant...");
+            await ctx.waitForParticipant();
+            console.log("Participant joined, starting session...");
 
-        const session = new voice.AgentSession({
-            vad: ctx.proc.userData.vad! as silero.VAD,
-            llm: new google.LLM({
-                model: "gemini-2.5-flash",
-                vertexai: true,
-                project: "learned-catcher-481711-g0",
-                location: "asia-south1"
-            }),
-        });
+            const session = new voice.AgentSession({
+                llm: new google.LLM({
+                    model: "gemini-2.5-flash",
+                    vertexai: true,
+                    project: "learned-catcher-481711-g0",
+                    location: "asia-south1",
+                }),
+            });
 
-        await session.start({
-            agent: new TriageAgent(),
-            room: ctx.room,
-            inputOptions: {
-                audioEnabled: false,
-                textEnabled: true
-            },
-            outputOptions: {
-                audioEnabled: false,
-                transcriptionEnabled: false
-            }
-        });
+            await session.start({
+                agent: new TriageAgent(),
+                room: ctx.room,
+                inputOptions: { audioEnabled: false },
+                outputOptions: { audioEnabled: false },
+            });
+            console.log("Session started successfully");
+        } catch (err) {
+            console.error("Error in entry:", err);
+        }
     },
+    // entry: async (ctx: JobContext) => {
+    //     await ctx.connect();
+    //     await ctx.waitForParticipant();
+    //
+    //     const session = new voice.AgentSession({
+    //         llm: new google.LLM({
+    //             model: "gemini-2.5-flash",
+    //             vertexai: true,
+    //             project: "learned-catcher-481711-g0",
+    //             location: "asia-south1"
+    //         }),
+    //     });
+    //
+    //     await session.start({
+    //         agent: new TriageAgent(),
+    //         room: ctx.room,
+    //         inputOptions: {
+    //             audioEnabled: false,
+    //         },
+    //         outputOptions: {
+    //             audioEnabled: false,
+    //         }
+    //     });
+    // },
 });
