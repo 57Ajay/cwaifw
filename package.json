@@ -1,0 +1,16 @@
+{
+  "name": "cwaifw",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@livekit/agents": "^1.0.40",
+    "@livekit/agents-plugin-silero": "^1.0.40"
+  }
+}
