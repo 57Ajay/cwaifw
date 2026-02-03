@@ -11,4 +11,4 @@ redis:
   address: localhost:6379
 
 keys:
-  lkitkey: wkejnd$#2!()&kjqwnwdnwe^%##$!l_+
+  lkitkey: mysecretkey123456789abcdef

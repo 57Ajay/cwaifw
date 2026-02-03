@@ -16,10 +16,25 @@ services:
     depends_on:
       - redis
 
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+    depends_on:
+      - livekit
+
   agent:
     build: .
     restart: unless-stopped
     network_mode: "host"
+    environment:
+      - LIVEKIT_URL=ws://localhost:7880
     env_file:
       - .env
     depends_on:
@@ -27,3 +42,5 @@ services:
 
 volumes:
   redis_data:
+  caddy_data:
+  caddy_config:

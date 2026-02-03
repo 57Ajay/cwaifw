@@ -40,14 +40,22 @@ export default defineAgent({
         const session = new voice.AgentSession({
             vad: ctx.proc.userData.vad! as silero.VAD,
             llm: new google.LLM({
-                model: "gemini-2.0-flash",
+                model: "gemini-2.5-flash",
                 vertexai: true,
+                project: "learned-catcher-481711-g0",
+                location: "asia-south1"
             }),
         });
 
         await session.start({
             agent: new TriageAgent(),
             room: ctx.room,
+            inputOptions: {
+                audioEnabled: false
+            },
+            outputOptions: {
+                audioEnabled: false
+            }
         });
     },
 });

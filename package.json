@@ -3,10 +3,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "download-files": "node dist/index.js download-files",
-    "dev": "node dist/index.js dev",
-    "start": "node dist/index.js start"
+    "download-files": "bun run index.ts download-files",
+    "dev": "bun run index.ts dev",
+    "start": "bun run index.ts start"
   },
   "dependencies": {
     "@livekit/agents": "^1.0.40",
