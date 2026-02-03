@@ -1,46 +1,48 @@
 services:
-  redis:
-    image: redis:8.4-alpine
-    restart: unless-stopped
-    network_mode: "host"
-    volumes:
-      - redis_data:/data
-
-  livekit:
-    image: livekit/livekit-server:latest
-    restart: unless-stopped
-    network_mode: "host"
-    volumes:
-      - ./livekit.yaml:/etc/livekit.yaml
-    command: --config /etc/livekit.yaml
-    depends_on:
-      - redis
-
   caddy:
-    image: caddy:2.11-alpine
+    image: caddy:latest
     restart: unless-stopped
-    network_mode: "host"
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
     environment:
-      - DOMAIN=${DOMAIN}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+
+  livekit:
+    image: livekit/livekit-server:v1.9.10
+    restart: unless-stopped
+    command: --config /livekit.yaml
+    volumes:
+      - ./livekit.yaml:/livekit.yaml
+    ports:
+      - "7881:7881"
+      - "7882:7882/udp"
     depends_on:
-      - livekit
+      - redis
+    environment:
+      - LIVEKIT_IP=${PUBLIC_IP}
+
+  redis:
+    image: redis/redis-stack:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+      - "8001:8001"
 
   agent:
     build: .
-    restart: unless-stopped
-    network_mode: "host"
+    restart: always
     environment:
-      - LIVEKIT_URL=ws://localhost:7880
-    env_file:
-      - .env
+      - LIVEKIT_URL=ws://livekit:7880
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
     depends_on:
       - livekit
 
 volumes:
-  redis_data:
   caddy_data:
   caddy_config:

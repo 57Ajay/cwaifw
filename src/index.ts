@@ -51,10 +51,12 @@ export default defineAgent({
             agent: new TriageAgent(),
             room: ctx.room,
             inputOptions: {
-                audioEnabled: false
+                audioEnabled: false,
+                textEnabled: true
             },
             outputOptions: {
-                audioEnabled: false
+                audioEnabled: false,
+                transcriptionEnabled: false
             }
         });
     },
