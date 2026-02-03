@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis:8.4-alpine
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - redis_data:/data
+
+  livekit:
+    image: livekit/livekit-server:latest
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml
+    command: --config /etc/livekit.yaml
+    depends_on:
+      - redis
+
+  agent:
+    build: .
+    restart: unless-stopped
+    network_mode: "host"
+    env_file:
+      - .env
+    depends_on:
+      - livekit
+
+volumes:
+  redis_data:
