@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const ReturnAadharOTP = z.object({
     success: z.boolean(),
-    data: z.string().min(4).nullable(),
+    data: z.string().nullable(),
 });
 
 const ReturnVerifyAadharOtp = z.object({
@@ -21,7 +21,7 @@ export const sendAadharOtpApi = async ({ aadharNumber }: { aadharNumber: string 
     }
     return {
         success: true,
-        data: "6969",
+        data: "OTP sent successfully to registered mobile number",
     };
 }
 
